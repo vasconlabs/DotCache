@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>CacheBenchmarks-20251115-164658</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; text-align: right; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet v0.15.6, macOS 26.1 (25B78) [Darwin 25.1.0]
+Apple M4 Pro, 1 CPU, 12 logical and 12 physical cores
+.NET SDK 10.0.100
+  [Host]     : .NET 10.0.0 (10.0.0, 10.0.25.52411), Arm64 RyuJIT armv8.0-a
+  DefaultJob : .NET 10.0.0 (10.0.0, 10.0.25.52411), Arm64 RyuJIT armv8.0-a
+</code></pre>
+<pre><code></code></pre>
+
+<table>
+<thead><tr><th>Method</th><th>Mean</th><th>Error</th><th>StdDev</th><th>Completed Work Items</th><th>Lock Contentions</th><th>Gen0</th><th>Allocated</th>
+</tr>
+</thead><tbody><tr><td>GrpcSet</td><td>329.9 &mu;s</td><td>6.58 &mu;s</td><td>10.43 &mu;s</td><td>7.9326</td><td>0.0005</td><td>0.4883</td><td>7352 B</td>
+</tr><tr><td>GrpcGet</td><td>325.6 &mu;s</td><td>6.32 &mu;s</td><td>9.84 &mu;s</td><td>7.9302</td><td>0.0015</td><td>0.4883</td><td>7177 B</td>
+</tr><tr><td>RedisSet</td><td>142.0 &mu;s</td><td>2.80 &mu;s</td><td>3.55 &mu;s</td><td>3.0002</td><td>0.1467</td><td>-</td><td>568 B</td>
+</tr><tr><td>RedisGet</td><td>136.0 &mu;s</td><td>2.65 &mu;s</td><td>4.21 &mu;s</td><td>3.0002</td><td>0.1399</td><td>-</td><td>448 B</td>
+</tr></tbody></table>
+</body>
+</html>
