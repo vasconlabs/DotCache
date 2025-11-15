@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+option csharp_namespace = "Vasconlabs.Aeolus.Domain.Contracts.V1";
+
+package aeolus.v1;
+
+message GetRequest { string key = 1; }
+message GetResponse { bytes value = 1; bool found = 2; }
+
+message SetRequest { string key = 1; bytes value = 2; int64 ttl_seconds = 3; }
+message SetResponse { bool ok = 1; }
+
+message DeleteRequest { string key = 1; }
+message DeleteResponse { bool ok = 1; }
+
+message TTLRequest { string key = 1; }
+message TTLResponse { int64 ttl_seconds = 1; bool exists = 2; }
+
+message FlushAllRequest {}
+message FlushAllResponse { bool ok = 1; }
