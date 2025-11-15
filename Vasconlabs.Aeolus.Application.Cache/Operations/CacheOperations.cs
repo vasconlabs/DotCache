@@ -15,8 +15,6 @@ internal class CacheOperations(SessionPool sessionPool, CacheStore cacheStore): 
         try
         {
             await session.UpsertAsync(ref key, ref value);
-
-            await session.CompletePendingAsync();
         }
         finally
         {

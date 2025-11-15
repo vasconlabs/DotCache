@@ -16,7 +16,17 @@ public class CacheBenchmarks
     [GlobalSetup]
     public void Setup()
     {
-        var channel = GrpcChannel.ForAddress("http://127.0.0.1:8080");
+        var channel = GrpcChannel.ForAddress("http://127.0.0.1:8080", new GrpcChannelOptions
+        {
+            HttpHandler = new SocketsHttpHandler
+            {
+                EnableMultipleHttp2Connections = true,
+                PooledConnectionIdleTimeout = TimeSpan.FromMinutes(5),
+                KeepAlivePingDelay = TimeSpan.FromSeconds(30),
+                KeepAlivePingTimeout = TimeSpan.FromSeconds(10),
+                KeepAlivePingPolicy = HttpKeepAlivePingPolicy.Always
+            }
+        });
         _grpcClient = new AeolusCacheGrpcService.AeolusCacheGrpcServiceClient(channel);
 
         // Redis client
