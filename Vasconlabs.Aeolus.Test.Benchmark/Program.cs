@@ -16,7 +16,7 @@ public class CacheBenchmarks
     [GlobalSetup]
     public void Setup()
     {
-        var channel = GrpcChannel.ForAddress("http://127.0.0.1:8080", new GrpcChannelOptions
+        var channel = GrpcChannel.ForAddress("https://localhost:7246", new GrpcChannelOptions
         {
             HttpHandler = new SocketsHttpHandler
             {
