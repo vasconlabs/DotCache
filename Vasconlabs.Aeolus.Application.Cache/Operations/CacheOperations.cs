@@ -8,13 +8,13 @@ namespace Vasconlabs.Aeolus.Application.Cache.Operations;
 
 internal class CacheOperations(SessionPool sessionPool, CacheStore cacheStore): ICacheOperations
 {
-    public async Task Set(string key, CacheModel value)
+    public void Set(ulong key, CacheModel value)
     {
-        ClientSession<string, CacheModel, CacheModel, CacheModel, Empty, IFunctions<string, CacheModel, CacheModel, CacheModel, Empty>> session = sessionPool.RentSession();
+        ClientSession<ulong, CacheModel, CacheModel, CacheModel, Empty, IFunctions<ulong, CacheModel, CacheModel, CacheModel, Empty>> session = sessionPool.RentSession();
         
         try
         {
-            await session.UpsertAsync(ref key, ref value);
+            session.Upsert(ref key, ref value);
         }
         finally
         {
@@ -22,15 +22,23 @@ internal class CacheOperations(SessionPool sessionPool, CacheStore cacheStore): 
         }
     }
 
-    public async Task<CacheModel?> Get(string key)
+    public ReadOnlyMemory<byte>? Get(ulong key)
     {
-        ClientSession<string, CacheModel, CacheModel, CacheModel, Empty, IFunctions<string, CacheModel, CacheModel, CacheModel, Empty>> session = sessionPool.RentSession();
+        ClientSession<ulong, CacheModel, CacheModel, CacheModel, Empty, IFunctions<ulong, CacheModel, CacheModel, CacheModel, Empty>> session = sessionPool.RentSession();
         
         try
         {
-            FasterKV<string, CacheModel>.ReadAsyncResult<CacheModel, CacheModel, Empty> result = await session.ReadAsync(ref key);
+            CacheModel input = default;
+            CacheModel output = default;
+
+            Status status = session.Read(ref key, ref input, ref output);
+
+            if (!status.IsPending) return status.Found ? output.Data : null;
             
-            return result.Status.Found ? result.Output : null;
+            FasterKV<ulong, CacheModel>.ReadAsyncResult<CacheModel, CacheModel, Empty> result = session.ReadAsync(ref key, ref input).GetAwaiter().GetResult();
+            
+            return result.Status.Found ? result.Output.Data : null;
+
         }
         finally
         {
@@ -44,5 +52,10 @@ internal class CacheOperations(SessionPool sessionPool, CacheStore cacheStore): 
             await session.CompletePendingAsync();
         
         await cacheStore.Store.TakeFullCheckpointAsync(CheckpointType.FoldOver);
+    }
+    
+    public async Task SaveLogCommit()
+    {
+        await cacheStore.Store.TakeHybridLogCheckpointAsync(CheckpointType.Snapshot);
     }
 }

@@ -8,35 +8,27 @@ namespace Vasconlabs.Aeolus.Interface.Server.Services;
 
 public class AeolusCacheService(ICacheOperations cacheOperations): AeolusCacheGrpcService.AeolusCacheGrpcServiceBase
 {
-    public override async Task<GetResponse> Get(GetRequest request, ServerCallContext context)
+    public override Task<GetResponse> Get(GetRequest request, ServerCallContext context)
     {
-        CacheModel? model = await cacheOperations.Get(request.Key);
+        ReadOnlyMemory<byte>? model = cacheOperations.Get(request.Key);
 
         if (model is not null)
         {
-            return new GetResponse
+            return Task.FromResult(new GetResponse
             {
-                Value = ByteString.CopyFrom(model.Value.AsSpan()),
+                Value = UnsafeByteOperations.UnsafeWrap(model.Value),
                 Found = true
-            };            
+            });            
         }
         
-        return new GetResponse();
+        return NotOkResponse;
     }
 
-    public override async Task<SetResponse> Set(SetRequest request, ServerCallContext context)
+    public override Task<SetResponse> Set(CacheEntry request, ServerCallContext context)
     {
-        await cacheOperations.Set(request.Key, new CacheModel
-        {
-            Key = request.Key,
-            Value = request.Value.ToByteArray(),
-            Ttl = 0
-        });
+        cacheOperations.Set(request.Key, new CacheModel(request.Value.Memory));
         
-        return new SetResponse
-        {
-            Ok = true
-        };
+        return OkResponse; 
     }
 
     public override Task<DeleteResponse> Delete(DeleteRequest request, ServerCallContext context)
@@ -53,4 +45,7 @@ public class AeolusCacheService(ICacheOperations cacheOperations): AeolusCacheGr
     {
         return base.FlushAll(request, context);
     }
+    
+    private static readonly Task<SetResponse> OkResponse = Task.FromResult(new SetResponse { Ok = true });
+    private static readonly Task<GetResponse> NotOkResponse = Task.FromResult(new GetResponse());
 }

@@ -1,14 +1,8 @@
 namespace Vasconlabs.Aeolus.Domain.Contracts.Cache;
 
-public class CacheModel
+public readonly struct CacheModel
 {
-    public required string Key { get; init; }
+    public readonly ReadOnlyMemory<byte> Data;
     
-    public required byte[] Value { get; init; }
-    
-    public long Ttl { get; init; }
-    
-    public ReadOnlyMemory<byte> AsMemory() => Value.AsMemory();
-    
-    public ReadOnlySpan<byte> AsSpan() => Value.AsSpan();
+    public CacheModel(ReadOnlyMemory<byte> data) => Data = data;
 }

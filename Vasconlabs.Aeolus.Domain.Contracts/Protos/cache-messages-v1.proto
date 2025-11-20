@@ -4,7 +4,13 @@ option csharp_namespace = "Vasconlabs.Aeolus.Domain.Contracts.V1";
 
 package aeolus.v1;
 
-message GetRequest { string key = 1; }
+message CacheEntry {
+  uint64 key = 1;
+  bytes value = 2;
+}
+
+
+message GetRequest { uint64 key = 1; }
 message GetResponse { bytes value = 1; bool found = 2; }
 
 message SetRequest { string key = 1; bytes value = 2; int64 ttl_seconds = 3; }

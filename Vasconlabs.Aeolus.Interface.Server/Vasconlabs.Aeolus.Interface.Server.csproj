@@ -15,7 +15,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Protobuf Include="Protos\cache-service-v1.proto" GrpcServices="Server" AdditionalImportDirs="..\Vasconlabs.Aeolus.Domain.Contracts\Protos"/>
+        <Protobuf Include="Protos\cache-service-v1.proto" GrpcServices="Server" AdditionalImportDirs="..\Vasconlabs.Aeolus.Domain.Contracts\Protos" Options="csharp_enable_object_pool=true"/>
         <Protobuf Include="..\Vasconlabs.Aeolus.Domain.Contracts\Protos\cache-messages-v1.proto" GrpcServices="None" />
     </ItemGroup>
 

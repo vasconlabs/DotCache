@@ -4,9 +4,11 @@ namespace Vasconlabs.Aeolus.Domain.Contracts.Interfaces;
 
 public interface ICacheOperations
 {
-    public Task<CacheModel?> Get(string key);
+    public ReadOnlyMemory<byte>? Get(ulong key);
     
-    public Task Set(string key, CacheModel value);
+    public void Set(ulong key, CacheModel value);
     
     public Task SaveSnapshot();
+    
+    public Task SaveLogCommit();
 }

@@ -8,7 +8,7 @@ import "cache-messages-v1.proto";
 
 service AeolusCacheGrpcService {
   rpc Get(GetRequest) returns (GetResponse);
-  rpc Set(SetRequest) returns (SetResponse);
+  rpc Set(CacheEntry) returns (SetResponse);
   rpc Delete(DeleteRequest) returns (DeleteResponse);
   rpc TTL(TTLRequest) returns (TTLResponse);
   rpc FlushAll(FlushAllRequest) returns (FlushAllResponse);

@@ -40,11 +40,11 @@ public class CacheBenchmarks
     public async Task GrpcSet()
     {
         var key = $"key-{Guid.NewGuid()}";
-        var request = new SetRequest
+        var request = new CacheEntry
         {
-            Key = key,
+            Key = XxHash64.ComputeHash(key),
             Value = Google.Protobuf.ByteString.CopyFromUtf8("val"),
-            TtlSeconds = 60
+            //TtlSeconds = 60
         };
         await _grpcClient.SetAsync(request);
     }
@@ -53,7 +53,7 @@ public class CacheBenchmarks
     public async Task GrpcGet()
     {
         var key = "key-test";
-        var request = new GetRequest { Key = key };
+        var request = new GetRequest { Key = XxHash64.ComputeHash(key) };
         await _grpcClient.GetAsync(request);
     }
 
