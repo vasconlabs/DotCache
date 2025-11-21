@@ -1,7 +1,7 @@
-# DotCache
+# AeolusCache
 
 
-**DotCache** é um servidor de cache distribuído minimalista, construído em **.NET** e utilizando **gRPC** como protocolo principal — projetado para ser extremamente simples, rápido e fácil de integrar.
+**AeolusCache** é um servidor de cache distribuído minimalista, construído em **.NET** e utilizando **gRPC** como protocolo principal — projetado para ser extremamente simples, rápido e fácil de integrar.
 
 
 Ideal para aplicações .NET que precisam de um cache distribuído leve, com baixa latência e implantação simples via Docker.
@@ -23,5 +23,5 @@ Ideal para aplicações .NET que precisam de um cache distribuído leve, com bai
 Roadmap inclui:
 - Métricas (Prometheus)
 - Dashboard web
-- Persistência (AOF / Snapshot)
-- Cluster (sharding e replicação)
+- Persistência (Snapshot)
+- Cluster (replicação)
