@@ -1,8 +1,6 @@
-namespace Vasconlabs.Aeolus.Test.Benchmark;
-
-using System;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+
+namespace Vasconlabs.Aeolus.Client.Extensions;
 
 public static class XxHash64
 {

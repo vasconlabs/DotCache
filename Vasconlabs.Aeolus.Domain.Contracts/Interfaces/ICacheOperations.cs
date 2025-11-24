@@ -1,12 +1,10 @@
-using Vasconlabs.Aeolus.Domain.Contracts.Cache;
-
 namespace Vasconlabs.Aeolus.Domain.Contracts.Interfaces;
 
 public interface ICacheOperations
 {
-    public ReadOnlyMemory<byte>? Get(ulong key);
+    public ReadOnlyMemory<byte> Get(ReadOnlySpan<byte> key);
     
-    public void Set(ulong key, CacheModel value);
+    public void Set(ReadOnlySpan<byte> key, ReadOnlySpan<byte> value);
     
     public Task SaveSnapshot();
     

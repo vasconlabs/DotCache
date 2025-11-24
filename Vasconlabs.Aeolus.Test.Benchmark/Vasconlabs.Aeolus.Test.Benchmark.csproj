@@ -9,18 +9,11 @@
 
     <ItemGroup>
       <PackageReference Include="BenchmarkDotNet" Version="0.15.6" />
-      <PackageReference Include="Google.Protobuf" Version="3.33.1" />
-      <PackageReference Include="Grpc.Net.Client" Version="2.71.0" />
-      <PackageReference Include="Grpc.Tools" Version="2.76.0">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
       <PackageReference Include="StackExchange.Redis" Version="2.9.32" />
-      <Protobuf Include="..\Vasconlabs.Aeolus.Domain.Contracts\Protos\cache-messages-v1.proto" GrpcServices="None" />
-      <Protobuf Include="..\Vasconlabs.Aeolus.Interface.Server\Protos\cache-service-v1.proto" GrpcServices="Client" AdditionalImportDirs="..\Vasconlabs.Aeolus.Domain.Contracts\Protos" />
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Vasconlabs.Aeolus.Client\Vasconlabs.Aeolus.Client.csproj" />
       <ProjectReference Include="..\Vasconlabs.Aeolus.Domain.Contracts\Vasconlabs.Aeolus.Domain.Contracts.csproj" />
     </ItemGroup>
 

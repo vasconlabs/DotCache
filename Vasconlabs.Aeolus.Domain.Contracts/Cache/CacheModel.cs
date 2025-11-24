@@ -4,5 +4,11 @@ public readonly struct CacheModel
 {
     public readonly ReadOnlyMemory<byte> Data;
     
-    public CacheModel(ReadOnlyMemory<byte> data) => Data = data;
+    public readonly ulong Ttl;
+    
+    public CacheModel(ReadOnlyMemory<byte> data, ulong ttl)
+    {
+        Data = data;
+        Ttl = ttl;
+    }
 }

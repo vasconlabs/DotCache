@@ -1,8 +1,9 @@
 ﻿using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
-using Grpc.Net.Client;
+using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
-using Vasconlabs.Aeolus.Domain.Contracts.V1;
+using Vasconlabs.Aeolus.Client;
+using Vasconlabs.Aeolus.Client.Interfaces;
 
 namespace Vasconlabs.Aeolus.Test.Benchmark;
 
@@ -10,67 +11,53 @@ namespace Vasconlabs.Aeolus.Test.Benchmark;
 [ThreadingDiagnoser]
 public class CacheBenchmarks
 {
-    private AeolusCacheGrpcService.AeolusCacheGrpcServiceClient _grpcClient = null!;
     private IDatabase _redisDb = null!;
+    private IAeolusCacheService _cache = null!;
 
     [GlobalSetup]
     public void Setup()
     {
-        var channel = GrpcChannel.ForAddress("https://localhost:7246", new GrpcChannelOptions
-        {
-            HttpHandler = new SocketsHttpHandler
-            {
-                EnableMultipleHttp2Connections = true,
-                PooledConnectionIdleTimeout = TimeSpan.FromMinutes(5),
-                KeepAlivePingDelay = TimeSpan.FromSeconds(30),
-                KeepAlivePingTimeout = TimeSpan.FromSeconds(10),
-                KeepAlivePingPolicy = HttpKeepAlivePingPolicy.Always
-            }
-        });
-        _grpcClient = new AeolusCacheGrpcService.AeolusCacheGrpcServiceClient(channel);
+        var services = new ServiceCollection();
 
-        // Redis client
+        services.AddAeolusClient(opts =>
+        {
+            opts.BaseUrl = "https://localhost:7246";
+        });
+
+        var provider = services.BuildServiceProvider();
+
+        _cache = provider.GetRequiredService<IAeolusCacheService>();
+        
         var redis = ConnectionMultiplexer.Connect("127.0.0.1:6379");
+        
         _redisDb = redis.GetDatabase();
     }
 
     // ---------------- gRPC ----------------
-
+    
     [Benchmark]
     public async Task GrpcSet()
     {
-        var key = $"key-{Guid.NewGuid()}";
-        var request = new CacheEntry
-        {
-            Key = XxHash64.ComputeHash(key),
-            Value = Google.Protobuf.ByteString.CopyFromUtf8("val"),
-            //TtlSeconds = 60
-        };
-        await _grpcClient.SetAsync(request);
+        await _cache.SetAsync("test-key", new byte[] { 1, 2, 3 });
     }
 
     [Benchmark]
     public async Task GrpcGet()
     {
-        var key = "key-test";
-        var request = new GetRequest { Key = XxHash64.ComputeHash(key) };
-        await _grpcClient.GetAsync(request);
+        await _cache.GetAsync("test-key");
     }
-
     // ---------------- Redis ----------------
 
     [Benchmark]
     public async Task RedisSet()
     {
-        var key = $"key-{Guid.NewGuid()}";
-        await _redisDb.StringSetAsync(key, "val", TimeSpan.FromSeconds(60));
+        await _redisDb.StringSetAsync("test-key", new byte[] { 1, 2, 3 }, TimeSpan.FromSeconds(60));
     }
-
+    
     [Benchmark]
     public async Task RedisGet()
     {
-        var key = "key-test";
-        await _redisDb.StringGetAsync(key);
+        await _redisDb.StringGetAsync("test-key");
     }
 }
 
@@ -78,6 +65,13 @@ class Program
 {
     static void Main(string[] args)
     {
+        var services = new ServiceCollection();
+        
+        services.AddAeolusClient(opts =>
+        {
+            opts.BaseUrl = "https://localhost:7246"; 
+        });
+        
         BenchmarkRunner.Run<CacheBenchmarks>();
     }
 }

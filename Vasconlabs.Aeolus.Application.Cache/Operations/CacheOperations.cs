@@ -1,47 +1,69 @@
+using System.Buffers;
 using FASTER.core;
 using Vasconlabs.Aeolus.Application.Cache.Sessions;
 using Vasconlabs.Aeolus.Application.Cache.Store;
-using Vasconlabs.Aeolus.Domain.Contracts.Cache;
 using Vasconlabs.Aeolus.Domain.Contracts.Interfaces;
 
 namespace Vasconlabs.Aeolus.Application.Cache.Operations;
 
+using AeolusSession = ClientSession<byte[], SpanByte, SpanByte, SpanByteAndMemory, Empty, IFunctions<byte[], SpanByte, SpanByte, SpanByteAndMemory, Empty>>;
+
 internal class CacheOperations(SessionPool sessionPool, CacheStore cacheStore): ICacheOperations
 {
-    public void Set(ulong key, CacheModel value)
+    public void Set(ReadOnlySpan<byte> key, ReadOnlySpan<byte> value)
     {
-        ClientSession<ulong, CacheModel, CacheModel, CacheModel, Empty, IFunctions<ulong, CacheModel, CacheModel, CacheModel, Empty>> session = sessionPool.RentSession();
+        AeolusSession session = sessionPool.RentSession();
+        
+        byte[] keyBuffer = ArrayPool<byte>.Shared.Rent(8);
+        byte[] valBuf = ArrayPool<byte>.Shared.Rent(value.Length);
         
         try
         {
-            session.Upsert(ref key, ref value);
+            
+            key.CopyTo(keyBuffer);
+            value.CopyTo(valBuf);
+
+            SpanByte sb = SpanByte.FromPinnedMemory(valBuf);
+            sb.Length = value.Length;
+
+            session.Upsert(ref keyBuffer, ref sb);
         }
         finally
         {
+            ArrayPool<byte>.Shared.Return(keyBuffer);
+            ArrayPool<byte>.Shared.Return(valBuf);
             sessionPool.ReturnSession(session);
         }
     }
 
-    public ReadOnlyMemory<byte>? Get(ulong key)
+    public ReadOnlyMemory<byte> Get(ReadOnlySpan<byte> key)
     {
-        ClientSession<ulong, CacheModel, CacheModel, CacheModel, Empty, IFunctions<ulong, CacheModel, CacheModel, CacheModel, Empty>> session = sessionPool.RentSession();
-        
+        AeolusSession session = sessionPool.RentSession();
+        byte[] keyBuffer = ArrayPool<byte>.Shared.Rent(8);
+
         try
         {
-            CacheModel input = default;
-            CacheModel output = default;
+            key.CopyTo(keyBuffer);
 
-            Status status = session.Read(ref key, ref input, ref output);
+            SpanByte input = default;
+            SpanByteAndMemory output = default;
 
-            if (!status.IsPending) return status.Found ? output.Data : null;
-            
-            FasterKV<ulong, CacheModel>.ReadAsyncResult<CacheModel, CacheModel, Empty> result = session.ReadAsync(ref key, ref input).GetAwaiter().GetResult();
-            
-            return result.Status.Found ? result.Output.Data : null;
+            Status status = session.Read(ref keyBuffer, ref input, ref output);
 
+            if (!status.Found) return ReadOnlyMemory<byte>.Empty;
+
+            ReadOnlySpan<byte> src = output.IsSpanByte ?
+                output.SpanByte.AsReadOnlySpan() :
+                output.Memory.Memory.Span;
+
+            byte[] result = ArrayPool<byte>.Shared.Rent(src.Length);
+            src.CopyTo(result);
+
+            return result.AsMemory(0, src.Length);
         }
         finally
         {
+            ArrayPool<byte>.Shared.Return(keyBuffer);
             sessionPool.ReturnSession(session);
         }
     }
@@ -57,5 +79,16 @@ internal class CacheOperations(SessionPool sessionPool, CacheStore cacheStore): 
     public async Task SaveLogCommit()
     {
         await cacheStore.Store.TakeHybridLogCheckpointAsync(CheckpointType.Snapshot);
+    }
+    
+    private static ReadOnlyMemory<byte> CopyToNewArray(SpanByteAndMemory output)
+    {
+        ReadOnlySpan<byte> src = output.IsSpanByte
+            ? output.SpanByte.AsReadOnlySpan()
+            : output.Memory.Memory.Span;
+
+        byte[] arr = new byte[src.Length];
+        src.CopyTo(arr);
+        return arr;
     }
 }

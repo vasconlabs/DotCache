@@ -1,34 +1,70 @@
+using System.Buffers;
+using System.Buffers.Binary;
 using Google.Protobuf;
 using Grpc.Core;
-using Vasconlabs.Aeolus.Domain.Contracts.Cache;
 using Vasconlabs.Aeolus.Domain.Contracts.Interfaces;
 using Vasconlabs.Aeolus.Domain.Contracts.V1;
 
 namespace Vasconlabs.Aeolus.Interface.Server.Services;
 
-public class AeolusCacheService(ICacheOperations cacheOperations): AeolusCacheGrpcService.AeolusCacheGrpcServiceBase
+public class AeolusCacheService(ICacheOperations cacheOperations) : AeolusCacheGrpcService.AeolusCacheGrpcServiceBase
 {
-    public override Task<GetResponse> Get(GetRequest request, ServerCallContext context)
+    public override async Task Get(IAsyncStreamReader<RawMessage> requestStream, IServerStreamWriter<RawMessage> responseStream, ServerCallContext context)
     {
-        ReadOnlyMemory<byte>? model = cacheOperations.Get(request.Key);
+        RawMessage notFoundMsg = new RawMessage(); 
 
-        if (model is not null)
+        await foreach (RawMessage msg in requestStream.ReadAllAsync())
         {
-            return Task.FromResult(new GetResponse
+            if (msg.Data.Length < 8) continue;
+            
+            ReadOnlyMemory<byte> result = cacheOperations.Get(msg.Data.Span);
+            
+            if (result.Length == 0)
             {
-                Value = UnsafeByteOperations.UnsafeWrap(model.Value),
-                Found = true
-            });            
+                await responseStream.WriteAsync(notFoundMsg);
+                continue;
+            }
+            
+            ulong ttl = BinaryPrimitives.ReadUInt64LittleEndian(result[..8].Span);
+            
+            if ((ulong)DateTime.UtcNow.Ticks > ttl)
+            {
+                await responseStream.WriteAsync(notFoundMsg);
+                continue;
+            }
+            
+            byte[] buffer = ArrayPool<byte>.Shared.Rent(result.Length);
+                
+            try
+            {
+                result.CopyTo(buffer);
+                
+                await responseStream.WriteAsync(new RawMessage
+                {
+                    Data = UnsafeByteOperations.UnsafeWrap(buffer)
+                });
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(buffer);
+            }
         }
-        
-        return NotOkResponse;
     }
-
-    public override Task<SetResponse> Set(CacheEntry request, ServerCallContext context)
+    
+    public override async Task Set(IAsyncStreamReader<RawMessage> requestStream, IServerStreamWriter<RawMessage> responseStream, ServerCallContext context)
     {
-        cacheOperations.Set(request.Key, new CacheModel(request.Value.Memory));
+        RawMessage okMsg = new RawMessage();
         
-        return OkResponse; 
+        await foreach (RawMessage msg in requestStream.ReadAllAsync())
+        {
+            if (msg.Data.Length < 16) continue;
+
+            ReadOnlySpan<byte> span = msg.Data.Span;
+            
+            cacheOperations.Set(span.Slice(0, 8), span.Slice(8));
+            
+            await responseStream.WriteAsync(okMsg);
+        }
     }
 
     public override Task<DeleteResponse> Delete(DeleteRequest request, ServerCallContext context)
@@ -45,7 +81,4 @@ public class AeolusCacheService(ICacheOperations cacheOperations): AeolusCacheGr
     {
         return base.FlushAll(request, context);
     }
-    
-    private static readonly Task<SetResponse> OkResponse = Task.FromResult(new SetResponse { Ok = true });
-    private static readonly Task<GetResponse> NotOkResponse = Task.FromResult(new GetResponse());
 }

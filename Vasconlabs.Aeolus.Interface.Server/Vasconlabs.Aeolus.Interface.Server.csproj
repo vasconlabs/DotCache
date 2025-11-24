@@ -23,4 +23,20 @@
       <ProjectReference Include="..\Vasconlabs.Aeolus.Application.Cache\Vasconlabs.Aeolus.Application.Cache.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="Marshaller\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="Marshaller\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Remove="Marshaller\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Marshaller\**" />
+    </ItemGroup>
+
 </Project>

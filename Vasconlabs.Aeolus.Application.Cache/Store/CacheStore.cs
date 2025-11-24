@@ -1,12 +1,10 @@
 using FASTER.core;
-using Vasconlabs.Aeolus.Application.Cache.Serializer;
-using Vasconlabs.Aeolus.Domain.Contracts.Cache;
 
 namespace Vasconlabs.Aeolus.Application.Cache.Store;
 
 internal class CacheStore
 {
-    public FasterKV<ulong, CacheModel> Store { get; }
+    public FasterKV<byte[], SpanByte> Store { get; }
 
     public CacheStore()
     {
@@ -25,12 +23,12 @@ internal class CacheStore
             CheckpointDir = checkpointPath
         };
         
-        SerializerSettings<ulong, CacheModel> serializerSettings = new SerializerSettings<ulong, CacheModel>
-        {
-            valueSerializer = () => new CacheModelSerializer()
-        };
+        // SerializerSettings<long, SpanByte> serializerSettings = new SerializerSettings<long, SpanByte>
+        // {
+        //     valueSerializer = () => new CacheModelSerializer()
+        // };
 
-        Store = new FasterKV<ulong, CacheModel>(1 << 20, logSettings, checkpointSettings, serializerSettings);
+        Store = new FasterKV<byte[], SpanByte>(1 << 20, logSettings, checkpointSettings);
         
         if (Directory.EnumerateFiles(logPath, "aeolus.log*").Any() && Directory.EnumerateFiles(logPath, "aeolus.obj.log*").Any())
         {

@@ -4,11 +4,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{F5A7FA
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{545109B9-2BCB-4B66-BA86-0118F5CA8B31}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{BEE4DBA8-DA39-4627-BF9F-AFC0900CAC2B}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Interface", "Interface", "{32F8E128-9070-4CDA-8021-286AB677EB01}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{D42C0E4D-39B3-4776-AE40-CA08FD7AA290}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7E204A47-1850-44C0-A14C-DA281AE973A4}"
 	ProjectSection(SolutionItems) = preProject
@@ -21,11 +17,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vasconlabs.Aeolus.Domain.Co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vasconlabs.Aeolus.Application.Cache", "Vasconlabs.Aeolus.Application.Cache\Vasconlabs.Aeolus.Application.Cache.csproj", "{68D26C18-038F-4BF9-90F0-E9BC6C8AD19D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Orchestration", "Orchestration", "{EAB4F192-30D3-4A9A-8BFA-9B909A73DE75}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{1AF39568-92D1-455C-AFE6-3DB46EB0D71D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vasconlabs.Aeolus.Test.Benchmark", "Vasconlabs.Aeolus.Test.Benchmark\Vasconlabs.Aeolus.Test.Benchmark.csproj", "{909449AD-170F-4F48-899F-48AD89471A95}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{47C5B0C5-956F-4ABC-ADD4-7859ACFAA2A5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vasconlabs.Aeolus.Client", "Vasconlabs.Aeolus.Client\Vasconlabs.Aeolus.Client.csproj", "{D43B3F06-D5DA-432C-BFCF-B7C38635EFE2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,6 +35,7 @@ Global
 		{640A92C1-4265-4FB9-AC9F-185B0F063D89} = {F5A7FA92-CFC2-4A1F-A6B8-8E7710D28869}
 		{68D26C18-038F-4BF9-90F0-E9BC6C8AD19D} = {545109B9-2BCB-4B66-BA86-0118F5CA8B31}
 		{909449AD-170F-4F48-899F-48AD89471A95} = {1AF39568-92D1-455C-AFE6-3DB46EB0D71D}
+		{D43B3F06-D5DA-432C-BFCF-B7C38635EFE2} = {47C5B0C5-956F-4ABC-ADD4-7859ACFAA2A5}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{74AEB2F1-6580-423A-9B24-609D07BD3418}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -55,5 +54,9 @@ Global
 		{909449AD-170F-4F48-899F-48AD89471A95}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{909449AD-170F-4F48-899F-48AD89471A95}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{909449AD-170F-4F48-899F-48AD89471A95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D43B3F06-D5DA-432C-BFCF-B7C38635EFE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D43B3F06-D5DA-432C-BFCF-B7C38635EFE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D43B3F06-D5DA-432C-BFCF-B7C38635EFE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D43B3F06-D5DA-432C-BFCF-B7C38635EFE2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
