@@ -2,6 +2,7 @@
 using BenchmarkDotNet.Running;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
+using System.Text;
 using Vasconlabs.Aeolus.Client;
 using Vasconlabs.Aeolus.Client.Interfaces;
 
@@ -28,9 +29,9 @@ public class CacheBenchmarks
 
         _cache = provider.GetRequiredService<IAeolusCacheService>();
         
-        var redis = ConnectionMultiplexer.Connect("127.0.0.1:6379");
+        //var redis = ConnectionMultiplexer.Connect("127.0.0.1:6379");
         
-        _redisDb = redis.GetDatabase();
+        //_redisDb = redis.GetDatabase();
     }
 
     // ---------------- gRPC ----------------
@@ -38,7 +39,7 @@ public class CacheBenchmarks
     [Benchmark]
     public async Task GrpcSet()
     {
-        await _cache.SetAsync("test-key", new byte[] { 1, 2, 3 });
+        await _cache.SetAsync("test-key", Encoding.ASCII.GetBytes("test-key"), TimeSpan.FromSeconds(60));
     }
 
     [Benchmark]
@@ -48,17 +49,17 @@ public class CacheBenchmarks
     }
     // ---------------- Redis ----------------
 
-    [Benchmark]
-    public async Task RedisSet()
-    {
-        await _redisDb.StringSetAsync("test-key", new byte[] { 1, 2, 3 }, TimeSpan.FromSeconds(60));
-    }
+    //[Benchmark]
+    //public async Task RedisSet()
+    //{
+    //    await _redisDb.StringSetAsync("test-key", new byte[] { 1, 2, 3 }, TimeSpan.FromSeconds(60));
+    //}
     
-    [Benchmark]
-    public async Task RedisGet()
-    {
-        await _redisDb.StringGetAsync("test-key");
-    }
+    //[Benchmark]
+    //public async Task RedisGet()
+    //{
+    //    await _redisDb.StringGetAsync("test-key");
+    //}
 }
 
 class Program

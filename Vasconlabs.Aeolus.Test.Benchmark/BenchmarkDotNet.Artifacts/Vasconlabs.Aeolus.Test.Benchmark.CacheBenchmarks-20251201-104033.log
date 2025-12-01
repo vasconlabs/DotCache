@@ -1,0 +1,204 @@
+// Validating benchmarks:
+// ***** BenchmarkRunner: Start   *****
+// ***** Found 2 benchmark(s) in total *****
+// ***** Building 1 exe(s) in Parallel: Start   *****
+// start dotnet  restore --nodeReuse:false /p:UseSharedCompilation=false /p:Deterministic=true /p:Optimize=true /p:ArtifactsPath="C:\Users\tiago.vasconcelos\source\repos\vasconlabs\Aeolus\Vasconlabs.Aeolus.Test.Benchmark\bin\Release\net10.0\Vasconlabs.Aeolus.Test.Benchmark-1/" /p:OutDir="C:\Users\tiago.vasconcelos\source\repos\vasconlabs\Aeolus\Vasconlabs.Aeolus.Test.Benchmark\bin\Release\net10.0\Vasconlabs.Aeolus.Test.Benchmark-1\bin\Release\net10.0/" /p:OutputPath="C:\Users\tiago.vasconcelos\source\repos\vasconlabs\Aeolus\Vasconlabs.Aeolus.Test.Benchmark\bin\Release\net10.0\Vasconlabs.Aeolus.Test.Benchmark-1\bin\Release\net10.0/" /p:PublishDir="C:\Users\tiago.vasconcelos\source\repos\vasconlabs\Aeolus\Vasconlabs.Aeolus.Test.Benchmark\bin\Release\net10.0\Vasconlabs.Aeolus.Test.Benchmark-1\publish/" in C:\Users\tiago.vasconcelos\source\repos\vasconlabs\Aeolus\Vasconlabs.Aeolus.Test.Benchmark\bin\Release\net10.0\Vasconlabs.Aeolus.Test.Benchmark-1
+// command took 1.66 sec and exited with 0
+// start dotnet  build -c Release --no-restore --nodeReuse:false /p:UseSharedCompilation=false /p:Deterministic=true /p:Optimize=true /p:ArtifactsPath="C:\Users\tiago.vasconcelos\source\repos\vasconlabs\Aeolus\Vasconlabs.Aeolus.Test.Benchmark\bin\Release\net10.0\Vasconlabs.Aeolus.Test.Benchmark-1/" /p:OutDir="C:\Users\tiago.vasconcelos\source\repos\vasconlabs\Aeolus\Vasconlabs.Aeolus.Test.Benchmark\bin\Release\net10.0\Vasconlabs.Aeolus.Test.Benchmark-1\bin\Release\net10.0/" /p:OutputPath="C:\Users\tiago.vasconcelos\source\repos\vasconlabs\Aeolus\Vasconlabs.Aeolus.Test.Benchmark\bin\Release\net10.0\Vasconlabs.Aeolus.Test.Benchmark-1\bin\Release\net10.0/" /p:PublishDir="C:\Users\tiago.vasconcelos\source\repos\vasconlabs\Aeolus\Vasconlabs.Aeolus.Test.Benchmark\bin\Release\net10.0\Vasconlabs.Aeolus.Test.Benchmark-1\publish/" --output "C:\Users\tiago.vasconcelos\source\repos\vasconlabs\Aeolus\Vasconlabs.Aeolus.Test.Benchmark\bin\Release\net10.0\Vasconlabs.Aeolus.Test.Benchmark-1\bin\Release\net10.0/" in C:\Users\tiago.vasconcelos\source\repos\vasconlabs\Aeolus\Vasconlabs.Aeolus.Test.Benchmark\bin\Release\net10.0\Vasconlabs.Aeolus.Test.Benchmark-1
+// command took 8.95 sec and exited with 0
+// ***** Done, took 00:00:10 (10.71 sec)   *****
+// Found 2 benchmarks:
+//   CacheBenchmarks.GrpcSet: DefaultJob
+//   CacheBenchmarks.GrpcGet: DefaultJob
+
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: High performance)
+// **************************
+// Benchmark: CacheBenchmarks.GrpcSet: DefaultJob
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet Vasconlabs.Aeolus.Test.Benchmark-1.dll --anonymousPipes 1380 1524 --benchmarkName Vasconlabs.Aeolus.Test.Benchmark.CacheBenchmarks.GrpcSet --job Default --benchmarkId 0 in C:\Users\tiago.vasconcelos\source\repos\vasconlabs\Aeolus\Vasconlabs.Aeolus.Test.Benchmark\bin\Release\net10.0\Vasconlabs.Aeolus.Test.Benchmark-1\bin\Release\net10.0
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.15.6
+// Runtime=.NET 10.0.0 (10.0.0, 10.0.25.52411), X64 RyuJIT x86-64-v3
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2+BMI1+BMI2+F16C+FMA+LZCNT+MOVBE,AVX,SSE3+SSSE3+SSE4.1+SSE4.2+POPCNT,X86Base+SSE+SSE2,AES+PCLMUL,AvxVnni,SERIALIZE VectorSize=256
+// Job: DefaultJob
+
+OverheadJitting  1: 1 op, 134600.00 ns, 134.6000 us/op
+
+System.Reflection.TargetInvocationException: Exception has been thrown by the target of an invocation.
+ ---> Grpc.Core.RpcException: Status(StatusCode="Unavailable", Detail="Error starting gRPC call. HttpRequestException: An error occurred while sending the request. IOException: The request was aborted. IOException: Unable to read data from the transport connection: An existing connection was forcibly closed by the remote host.. SocketException: An existing connection was forcibly closed by the remote host.", DebugException="System.Net.Http.HttpRequestException: An error occurred while sending the request.")
+ ---> System.Net.Http.HttpRequestException: An error occurred while sending the request.
+ ---> System.IO.IOException: The request was aborted.
+ ---> System.IO.IOException: Unable to read data from the transport connection: An existing connection was forcibly closed by the remote host..
+ ---> System.Net.Sockets.SocketException (10054): An existing connection was forcibly closed by the remote host.
+   --- End of inner exception stack trace ---
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource<System.Int32>.GetResult(Int16 token)
+   at Grpc.Net.Client.Balancer.Internal.StreamWrapper.ReadAsync(Memory`1 buffer, CancellationToken cancellationToken)
+   at System.Net.Security.SslStream.EnsureFullTlsFrameAsync[TIOAdapter](CancellationToken cancellationToken, Int32 estimatedSize)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Net.Security.SslStream.ReadAsyncInternal[TIOAdapter](Memory`1 buffer, CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at System.Net.Http.Http2Connection.ProcessIncomingFramesAsync()
+   --- End of inner exception stack trace ---
+   at System.Net.Http.Http2Connection.ThrowRequestAborted(Exception innerException)
+   at System.Net.Http.Http2Connection.Http2Stream.CheckResponseBodyState()
+   at System.Net.Http.Http2Connection.Http2Stream.TryEnsureHeaders()
+   at System.Net.Http.Http2Connection.Http2Stream.ReadResponseHeadersAsync(CancellationToken cancellationToken)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecuteFromThreadPool(Thread threadPoolThread)
+   at System.Threading.ThreadPoolWorkQueue.Dispatch()
+   at System.Threading.PortableThreadPool.WorkerThread.WorkerThreadStart()
+   at System.Threading.Thread.StartCallback()
+--- End of stack trace from previous location ---
+   at System.Net.Http.Http2Connection.ThrowRequestAborted(Exception innerException)
+   at System.Net.Http.Http2Connection.Http2Stream.CheckResponseBodyState()
+   at System.Net.Http.Http2Connection.Http2Stream.TryEnsureHeaders()
+   at System.Net.Http.Http2Connection.Http2Stream.ReadResponseHeadersAsync(CancellationToken cancellationToken)
+   at System.Net.Http.Http2Connection.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at System.Net.Http.Http2Connection.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)
+   at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.SocketsHttpHandler.<SendAsync>g__CreateHandlerAndSendAsync|115_0(HttpRequestMessage request, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingHttpMessageHandler.SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+   at Microsoft.Extensions.Http.Logging.LoggingScopeHttpMessageHandler.SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+   at Grpc.Net.Client.Balancer.Internal.BalancerHttpHandler.SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+   at Grpc.Net.Client.Internal.GrpcCall`2.RunCall(HttpRequestMessage request, Nullable`1 timeout)
+   --- End of inner exception stack trace ---
+   at Grpc.Net.Client.Internal.HttpContentClientStreamReader`2.MoveNextCore(CancellationToken cancellationToken)
+   at Vasconlabs.Aeolus.Client.Services.AeolusCacheService.SetAsync(String key, ReadOnlyMemory`1 value) in C:\Users\tiago.vasconcelos\source\repos\vasconlabs\Aeolus\Vasconlabs.Aeolus.Client\Services\AeolusCacheService.cs:line 64
+   at Vasconlabs.Aeolus.Test.Benchmark.CacheBenchmarks.GrpcSet() in C:\Users\tiago.vasconcelos\source\repos\vasconlabs\Aeolus\Vasconlabs.Aeolus.Test.Benchmark\Program.cs:line 41
+   at BenchmarkDotNet.Helpers.AwaitHelper.GetResult(Task task)
+   at BenchmarkDotNet.Autogenerated.Runnable_0.<.ctor>b__3_3() in C:\Users\tiago.vasconcelos\source\repos\vasconlabs\Aeolus\Vasconlabs.Aeolus.Test.Benchmark\bin\Release\net10.0\Vasconlabs.Aeolus.Test.Benchmark-1\Vasconlabs.Aeolus.Test.Benchmark-1.notcs:line 197
+   at BenchmarkDotNet.Autogenerated.Runnable_0.WorkloadActionNoUnroll(Int64 invokeCount) in C:\Users\tiago.vasconcelos\source\repos\vasconlabs\Aeolus\Vasconlabs.Aeolus.Test.Benchmark\bin\Release\net10.0\Vasconlabs.Aeolus.Test.Benchmark-1\Vasconlabs.Aeolus.Test.Benchmark-1.notcs:line 311
+   at BenchmarkDotNet.Engines.Engine.Measure(Action`1 action, Int64 invokeCount)
+   at BenchmarkDotNet.Engines.Engine.RunIteration(IterationData data)
+   at BenchmarkDotNet.Engines.EngineFactory.Jit(Engine engine, Int32 jitIndex, Int32 invokeCount, Int32 unrollFactor)
+   at BenchmarkDotNet.Engines.EngineFactory.CreateReadyToRun(EngineParameters engineParameters)
+   at BenchmarkDotNet.Autogenerated.Runnable_0.Run(IHost host, String benchmarkName) in C:\Users\tiago.vasconcelos\source\repos\vasconlabs\Aeolus\Vasconlabs.Aeolus.Test.Benchmark\bin\Release\net10.0\Vasconlabs.Aeolus.Test.Benchmark-1\Vasconlabs.Aeolus.Test.Benchmark-1.notcs:line 176
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+   --- End of inner exception stack trace ---
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.MethodBase.Invoke(Object obj, Object[] parameters)
+   at BenchmarkDotNet.Autogenerated.UniqueProgramName.AfterAssemblyLoadingAttached(String[] args) in C:\Users\tiago.vasconcelos\source\repos\vasconlabs\Aeolus\Vasconlabs.Aeolus.Test.Benchmark\bin\Release\net10.0\Vasconlabs.Aeolus.Test.Benchmark-1\Vasconlabs.Aeolus.Test.Benchmark-1.notcs:line 57
+// AfterAll
+No Workload Results were obtained from the run.
+// Benchmark Process 24288 has exited with code -1.
+
+// ** Remained 1 (50,0%) benchmark(s) to run. Estimated finish 2025-12-01 10:42 (0h 0m from now) **
+Setup power plan (GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c FriendlyName: High performance)
+// **************************
+// Benchmark: CacheBenchmarks.GrpcGet: DefaultJob
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet Vasconlabs.Aeolus.Test.Benchmark-1.dll --anonymousPipes 1484 1144 --benchmarkName Vasconlabs.Aeolus.Test.Benchmark.CacheBenchmarks.GrpcGet --job Default --benchmarkId 1 in C:\Users\tiago.vasconcelos\source\repos\vasconlabs\Aeolus\Vasconlabs.Aeolus.Test.Benchmark\bin\Release\net10.0\Vasconlabs.Aeolus.Test.Benchmark-1\bin\Release\net10.0
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.15.6
+// Runtime=.NET 10.0.0 (10.0.0, 10.0.25.52411), X64 RyuJIT x86-64-v3
+// GC=Concurrent Workstation
+// HardwareIntrinsics=AVX2+BMI1+BMI2+F16C+FMA+LZCNT+MOVBE,AVX,SSE3+SSSE3+SSE4.1+SSE4.2+POPCNT,X86Base+SSE+SSE2,AES+PCLMUL,AvxVnni,SERIALIZE VectorSize=256
+// Job: DefaultJob
+
+OverheadJitting  1: 1 op, 139800.00 ns, 139.8000 us/op
+
+System.Reflection.TargetInvocationException: Exception has been thrown by the target of an invocation.
+ ---> Grpc.Core.RpcException: Status(StatusCode="Unavailable", Detail="Error connecting to subchannel.", DebugException="System.Net.Sockets.SocketException: No connection could be made because the target machine actively refused it.")
+ ---> System.Net.Sockets.SocketException (10061): No connection could be made because the target machine actively refused it.
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at Grpc.Net.Client.Balancer.Internal.SocketConnectivitySubchannelTransport.TryConnectAsync(ConnectContext context, Int32 attempt)
+   --- End of inner exception stack trace ---
+   at Grpc.Net.Client.Internal.HttpContentClientStreamWriter`2.WriteAsyncCore[TState](Func`5 writeFunc, TState state, CancellationToken cancellationToken)
+   at Grpc.Net.Client.Internal.HttpContentClientStreamWriter`2.WriteCoreAsync(TRequest message, CancellationToken cancellationToken)
+   at Vasconlabs.Aeolus.Client.Services.AeolusCacheService.GetAsync(String key) in C:\Users\tiago.vasconcelos\source\repos\vasconlabs\Aeolus\Vasconlabs.Aeolus.Client\Services\AeolusCacheService.cs:line 29
+   at Vasconlabs.Aeolus.Test.Benchmark.CacheBenchmarks.GrpcGet() in C:\Users\tiago.vasconcelos\source\repos\vasconlabs\Aeolus\Vasconlabs.Aeolus.Test.Benchmark\Program.cs:line 47
+   at BenchmarkDotNet.Helpers.AwaitHelper.GetResult(Task task)
+   at BenchmarkDotNet.Autogenerated.Runnable_1.<.ctor>b__3_3() in C:\Users\tiago.vasconcelos\source\repos\vasconlabs\Aeolus\Vasconlabs.Aeolus.Test.Benchmark\bin\Release\net10.0\Vasconlabs.Aeolus.Test.Benchmark-1\Vasconlabs.Aeolus.Test.Benchmark-1.notcs:line 389
+   at BenchmarkDotNet.Autogenerated.Runnable_1.WorkloadActionNoUnroll(Int64 invokeCount) in C:\Users\tiago.vasconcelos\source\repos\vasconlabs\Aeolus\Vasconlabs.Aeolus.Test.Benchmark\bin\Release\net10.0\Vasconlabs.Aeolus.Test.Benchmark-1\Vasconlabs.Aeolus.Test.Benchmark-1.notcs:line 503
+   at BenchmarkDotNet.Engines.Engine.Measure(Action`1 action, Int64 invokeCount)
+   at BenchmarkDotNet.Engines.Engine.RunIteration(IterationData data)
+   at BenchmarkDotNet.Engines.EngineFactory.Jit(Engine engine, Int32 jitIndex, Int32 invokeCount, Int32 unrollFactor)
+   at BenchmarkDotNet.Engines.EngineFactory.CreateReadyToRun(EngineParameters engineParameters)
+   at BenchmarkDotNet.Autogenerated.Runnable_1.Run(IHost host, String benchmarkName) in C:\Users\tiago.vasconcelos\source\repos\vasconlabs\Aeolus\Vasconlabs.Aeolus.Test.Benchmark\bin\Release\net10.0\Vasconlabs.Aeolus.Test.Benchmark-1\Vasconlabs.Aeolus.Test.Benchmark-1.notcs:line 368
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+   --- End of inner exception stack trace ---
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.MethodBase.Invoke(Object obj, Object[] parameters)
+   at BenchmarkDotNet.Autogenerated.UniqueProgramName.AfterAssemblyLoadingAttached(String[] args) in C:\Users\tiago.vasconcelos\source\repos\vasconlabs\Aeolus\Vasconlabs.Aeolus.Test.Benchmark\bin\Release\net10.0\Vasconlabs.Aeolus.Test.Benchmark-1\Vasconlabs.Aeolus.Test.Benchmark-1.notcs:line 57
+// AfterAll
+No Workload Results were obtained from the run.
+// Benchmark Process 14088 has exited with code -1.
+
+// ** Remained 0 (0,0%) benchmark(s) to run. Estimated finish 2025-12-01 10:41 (0h 0m from now) **
+Successfully reverted power plan (GUID: 381b4222-f694-41f0-9685-ff5bb260df2e FriendlyName: Balanced)
+// ***** BenchmarkRunner: Finish  *****
+
+// * Export *
+  BenchmarkDotNet.Artifacts\results\Vasconlabs.Aeolus.Test.Benchmark.CacheBenchmarks-report.csv
+  BenchmarkDotNet.Artifacts\results\Vasconlabs.Aeolus.Test.Benchmark.CacheBenchmarks-report-github.md
+  BenchmarkDotNet.Artifacts\results\Vasconlabs.Aeolus.Test.Benchmark.CacheBenchmarks-report.html
+
+// * Detailed results *
+CacheBenchmarks.GrpcSet: DefaultJob
+Runtime = .NET 10.0.0 (10.0.0, 10.0.25.52411), X64 RyuJIT x86-64-v3; GC = Concurrent Workstation
+There are not any results runs
+
+CacheBenchmarks.GrpcGet: DefaultJob
+Runtime = .NET 10.0.0 (10.0.0, 10.0.25.52411), X64 RyuJIT x86-64-v3; GC = Concurrent Workstation
+There are not any results runs
+
+// * Summary *
+
+BenchmarkDotNet v0.15.6, Windows 11 (10.0.26200.7171)
+13th Gen Intel Core i5-1345U 1.60GHz, 1 CPU, 12 logical and 10 physical cores
+.NET SDK 10.0.100
+  [Host]     : .NET 10.0.0 (10.0.0, 10.0.25.52411), X64 RyuJIT x86-64-v3
+  DefaultJob : .NET 10.0.0 (10.0.0, 10.0.25.52411), X64 RyuJIT x86-64-v3
+
+
+| Method  | Mean | Error |
+|-------- |-----:|------:|
+| GrpcSet |   NA |    NA |
+| GrpcGet |   NA |    NA |
+
+Benchmarks with issues:
+  CacheBenchmarks.GrpcSet: DefaultJob
+  CacheBenchmarks.GrpcGet: DefaultJob
+
+// * Warnings *
+Environment
+  Summary -> Detected error exit code from one of the benchmarks. It might be caused by following antivirus software:
+        - Windows Defender (windowsdefender://)
+Use InProcessEmitToolchain or InProcessNoEmitToolchain to avoid new process creation.
+
+
+// * Legends *
+  Mean  : Arithmetic mean of all measurements
+  Error : Half of 99.9% confidence interval
+  1 ns  : 1 Nanosecond (0.000000001 sec)
+
+// * Diagnostic Output - ThreadingDiagnoser *
+
+// * Diagnostic Output - MemoryDiagnoser *
+
+
+// ***** BenchmarkRunner: End *****
+Run time: 00:01:01 (61.46 sec), executed benchmarks: 2
+
+Global total time: 00:01:12 (72.71 sec), executed benchmarks: 2
+// * Artifacts cleanup *
+Artifacts cleanup is finished

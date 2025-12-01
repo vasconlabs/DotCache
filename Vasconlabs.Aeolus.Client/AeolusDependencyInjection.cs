@@ -22,9 +22,9 @@ public static class AeolusDependencyInjection
         }).ConfigurePrimaryHttpMessageHandler(() => new SocketsHttpHandler
         {
             EnableMultipleHttp2Connections = true,
-            PooledConnectionIdleTimeout = TimeSpan.FromMinutes(5),
-            KeepAlivePingDelay = TimeSpan.FromSeconds(30),
-            KeepAlivePingTimeout = TimeSpan.FromSeconds(10),
+            PooledConnectionIdleTimeout = TimeSpan.FromMinutes(10),
+            KeepAlivePingDelay = TimeSpan.FromSeconds(15),
+            KeepAlivePingTimeout = TimeSpan.FromSeconds(20),
             KeepAlivePingPolicy = HttpKeepAlivePingPolicy.Always
         });
         

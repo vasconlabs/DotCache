@@ -1,0 +1,1 @@
+﻿global using AeolusSession = FASTER.core.ClientSession<ulong, byte[], byte[], byte[], FASTER.core.Empty, FASTER.core.IFunctions<ulong, byte[], byte[], byte[], FASTER.core.Empty>>;

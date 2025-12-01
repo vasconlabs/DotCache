@@ -1,4 +1,3 @@
-using System.Buffers;
 using FASTER.core;
 using Vasconlabs.Aeolus.Application.Cache.Sessions;
 using Vasconlabs.Aeolus.Application.Cache.Store;
@@ -6,64 +5,38 @@ using Vasconlabs.Aeolus.Domain.Contracts.Interfaces;
 
 namespace Vasconlabs.Aeolus.Application.Cache.Operations;
 
-using AeolusSession = ClientSession<byte[], SpanByte, SpanByte, SpanByteAndMemory, Empty, IFunctions<byte[], SpanByte, SpanByte, SpanByteAndMemory, Empty>>;
-
 internal class CacheOperations(SessionPool sessionPool, CacheStore cacheStore): ICacheOperations
 {
-    public void Set(ReadOnlySpan<byte> key, ReadOnlySpan<byte> value)
+    public async Task Set(ulong key, ReadOnlyMemory<byte> value)
     {
         AeolusSession session = sessionPool.RentSession();
-        
-        byte[] keyBuffer = ArrayPool<byte>.Shared.Rent(8);
-        byte[] valBuf = ArrayPool<byte>.Shared.Rent(value.Length);
-        
+
         try
         {
-            
-            key.CopyTo(keyBuffer);
-            value.CopyTo(valBuf);
+            byte[] buffer = value.ToArray();
 
-            SpanByte sb = SpanByte.FromPinnedMemory(valBuf);
-            sb.Length = value.Length;
-
-            session.Upsert(ref keyBuffer, ref sb);
+            await session.UpsertAsync(ref key, ref buffer);
         }
         finally
         {
-            ArrayPool<byte>.Shared.Return(keyBuffer);
-            ArrayPool<byte>.Shared.Return(valBuf);
             sessionPool.ReturnSession(session);
         }
     }
 
-    public ReadOnlyMemory<byte> Get(ReadOnlySpan<byte> key)
+    public async Task<ReadOnlyMemory<byte>> Get(ulong key)
     {
         AeolusSession session = sessionPool.RentSession();
-        byte[] keyBuffer = ArrayPool<byte>.Shared.Rent(8);
 
         try
         {
-            key.CopyTo(keyBuffer);
+            var result = await session.ReadAsync(ref key);
 
-            SpanByte input = default;
-            SpanByteAndMemory output = default;
+            if (result.Status.Found) return new ReadOnlyMemory<byte>(result.Output);
 
-            Status status = session.Read(ref keyBuffer, ref input, ref output);
-
-            if (!status.Found) return ReadOnlyMemory<byte>.Empty;
-
-            ReadOnlySpan<byte> src = output.IsSpanByte ?
-                output.SpanByte.AsReadOnlySpan() :
-                output.Memory.Memory.Span;
-
-            byte[] result = ArrayPool<byte>.Shared.Rent(src.Length);
-            src.CopyTo(result);
-
-            return result.AsMemory(0, src.Length);
+            return ReadOnlyMemory<byte>.Empty;
         }
         finally
         {
-            ArrayPool<byte>.Shared.Return(keyBuffer);
             sessionPool.ReturnSession(session);
         }
     }

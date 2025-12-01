@@ -1,4 +1,3 @@
-using System.Buffers;
 using System.Buffers.Binary;
 using Google.Protobuf;
 using Grpc.Core;
@@ -11,17 +10,26 @@ public class AeolusCacheService(ICacheOperations cacheOperations) : AeolusCacheG
 {
     public override async Task Get(IAsyncStreamReader<RawMessage> requestStream, IServerStreamWriter<RawMessage> responseStream, ServerCallContext context)
     {
-        RawMessage notFoundMsg = new RawMessage(); 
+        RawMessage notFoundMsg = new RawMessage 
+        {
+            Data = UnsafeByteOperations.UnsafeWrap(Array.Empty<byte>())
+        }; 
 
         await foreach (RawMessage msg in requestStream.ReadAllAsync())
         {
-            if (msg.Data.Length < 8) continue;
-            
-            ReadOnlyMemory<byte> result = cacheOperations.Get(msg.Data.Span);
+            if (msg.Data.Length < 8) 
+            {
+                await responseStream.WriteAsync(notFoundMsg);
+
+                continue;
+            }
+
+            ReadOnlyMemory<byte> result = await cacheOperations.Get(BinaryPrimitives.ReadUInt64LittleEndian(msg.Data.Span));
             
             if (result.Length == 0)
             {
                 await responseStream.WriteAsync(notFoundMsg);
+
                 continue;
             }
             
@@ -30,38 +38,36 @@ public class AeolusCacheService(ICacheOperations cacheOperations) : AeolusCacheG
             if ((ulong)DateTime.UtcNow.Ticks > ttl)
             {
                 await responseStream.WriteAsync(notFoundMsg);
+
                 continue;
             }
-            
-            byte[] buffer = ArrayPool<byte>.Shared.Rent(result.Length);
-                
-            try
+
+            await responseStream.WriteAsync(new RawMessage
             {
-                result.CopyTo(buffer);
-                
-                await responseStream.WriteAsync(new RawMessage
-                {
-                    Data = UnsafeByteOperations.UnsafeWrap(buffer)
-                });
-            }
-            finally
-            {
-                ArrayPool<byte>.Shared.Return(buffer);
-            }
+                Data = UnsafeByteOperations.UnsafeWrap(result[8..])
+            });
         }
     }
     
     public override async Task Set(IAsyncStreamReader<RawMessage> requestStream, IServerStreamWriter<RawMessage> responseStream, ServerCallContext context)
     {
-        RawMessage okMsg = new RawMessage();
-        
+        RawMessage okMsg = new RawMessage
+        {
+            Data = UnsafeByteOperations.UnsafeWrap(Array.Empty<byte>())
+        };
+
         await foreach (RawMessage msg in requestStream.ReadAllAsync())
         {
-            if (msg.Data.Length < 16) continue;
+            if (msg.Data.Length < 16)
+            {
+                await responseStream.WriteAsync(okMsg);
 
-            ReadOnlySpan<byte> span = msg.Data.Span;
+                continue;
+            } 
+
+            ReadOnlyMemory<byte> span = msg.Data.Memory;
             
-            cacheOperations.Set(span.Slice(0, 8), span.Slice(8));
+            await cacheOperations.Set(BinaryPrimitives.ReadUInt64LittleEndian(span.Slice(0, 8).Span), span.Slice(8));
             
             await responseStream.WriteAsync(okMsg);
         }

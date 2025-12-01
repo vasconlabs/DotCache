@@ -4,7 +4,7 @@ namespace Vasconlabs.Aeolus.Application.Cache.Store;
 
 internal class CacheStore
 {
-    public FasterKV<byte[], SpanByte> Store { get; }
+    public FasterKV<ulong, byte[]> Store { get; }
 
     public CacheStore()
     {
@@ -28,7 +28,7 @@ internal class CacheStore
         //     valueSerializer = () => new CacheModelSerializer()
         // };
 
-        Store = new FasterKV<byte[], SpanByte>(1 << 20, logSettings, checkpointSettings);
+        Store = new FasterKV<ulong, byte[]>(1 << 20, logSettings, checkpointSettings);
         
         if (Directory.EnumerateFiles(logPath, "aeolus.log*").Any() && Directory.EnumerateFiles(logPath, "aeolus.obj.log*").Any())
         {

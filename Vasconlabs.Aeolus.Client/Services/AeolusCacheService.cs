@@ -41,9 +41,9 @@ internal class AeolusCacheService(AeolusCacheGrpcService.AeolusCacheGrpcServiceC
         }
     }
 
-    public async Task SetAsync(string key, ReadOnlyMemory<byte> value)
+    public async Task SetAsync(string key, ReadOnlyMemory<byte> value, TimeSpan ttl)
     {
-        int totalSize = 8 + value.Length;
+        int totalSize = 16 + value.Length;
         byte[] buffer = ArrayPool<byte>.Shared.Rent(totalSize);
 
         try
@@ -51,8 +51,10 @@ internal class AeolusCacheService(AeolusCacheGrpcService.AeolusCacheGrpcServiceC
             Span<byte> span = buffer.AsSpan(0, totalSize);
 
             BinaryPrimitives.WriteUInt64LittleEndian(span[..8], XxHash64.ComputeHash(key));
-            
-            value.Span.CopyTo(span[8..]);
+
+            BinaryPrimitives.WriteUInt64LittleEndian(span[8..16], (ulong)(DateTime.UtcNow.Ticks + ttl.Ticks));
+
+            value.Span.CopyTo(span[16..]);
             
             RawMessage request = new()
             {
