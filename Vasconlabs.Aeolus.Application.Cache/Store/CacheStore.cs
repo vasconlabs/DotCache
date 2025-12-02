@@ -4,35 +4,50 @@ namespace Vasconlabs.Aeolus.Application.Cache.Store;
 
 internal class CacheStore
 {
-    public FasterKV<ulong, byte[]> Store { get; }
+    internal required FasterKV<ulong, byte[]> Store { get; set; }
 
-    public CacheStore()
+    private const string logFileName = "aeolus.log";
+    private const string objLogFileName = "aeolus.obj.log";
+
+    private readonly string logPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Aeolus", "logs");
+    private readonly string checkpointPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Aeolus", "checkpoints");
+
+    public void InitializeStore()
     {
-        string logPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Aeolus", "logs");
-        string checkpointPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Aeolus", "checkpoints");
-        
         LogSettings logSettings = new LogSettings
         {
-            LogDevice = Devices.CreateLogDevice(Path.Combine(logPath, "aeolus.log")),
-            ObjectLogDevice = Devices.CreateLogDevice(Path.Combine(logPath, "aeolus.obj.log")),
-            
+            LogDevice = Devices.CreateLogDevice(Path.Combine(logPath, logFileName)),
+            ObjectLogDevice = Devices.CreateLogDevice(Path.Combine(logPath, objLogFileName)),
+
         };
-        
+
         CheckpointSettings checkpointSettings = new CheckpointSettings
         {
-            CheckpointDir = checkpointPath
+            CheckpointDir = checkpointPath 
         };
-        
-        // SerializerSettings<long, SpanByte> serializerSettings = new SerializerSettings<long, SpanByte>
-        // {
-        //     valueSerializer = () => new CacheModelSerializer()
-        // };
 
         Store = new FasterKV<ulong, byte[]>(1 << 20, logSettings, checkpointSettings);
-        
-        if (Directory.EnumerateFiles(logPath, "aeolus.log*").Any() && Directory.EnumerateFiles(logPath, "aeolus.obj.log*").Any())
+
+        if (Directory.EnumerateFiles(logPath, $"{logFileName}*").Any() && Directory.EnumerateFiles(logPath, $"{objLogFileName}*").Any())
         {
             Store.Recover();
         }
+    }
+
+    public void FlushAllStore()
+    {
+        Store.Dispose();
+
+        foreach (var file in Directory.EnumerateFiles(logPath, $"{logFileName}*"))
+        {
+            File.Delete(file);
+        }
+
+        foreach (var file in Directory.EnumerateFiles(logPath, $"{objLogFileName}*"))
+        {
+            File.Delete(file);
+        }
+
+        InitializeStore();
     }
 }

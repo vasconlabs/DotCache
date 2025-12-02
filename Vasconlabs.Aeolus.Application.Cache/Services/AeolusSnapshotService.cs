@@ -1,6 +1,7 @@
+using Microsoft.Extensions.Hosting;
 using Vasconlabs.Aeolus.Domain.Contracts.Interfaces;
 
-namespace Vasconlabs.Aeolus.Interface.Server.Services;
+namespace Vasconlabs.Aeolus.Application.Cache.Services;
 
 public class AeolusSnapshotService(ICacheOperations cacheOperations): BackgroundService
 {

@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Vasconlabs.Aeolus.Application.Cache.Operations;
 using Vasconlabs.Aeolus.Application.Cache.Sessions;
 using Vasconlabs.Aeolus.Application.Cache.Store;
@@ -18,5 +19,16 @@ public static class AeolusCacheDependencyInjection
         services.AddSingleton<ICacheOperations, CacheOperations>();
         
         return services;
+    }
+
+    public static IHost UseAeolusCacheService(this IHost host)
+    {
+        ArgumentNullException.ThrowIfNull(host);
+
+        CacheStore cacheStore = host.Services.GetRequiredService<CacheStore>();
+
+        cacheStore.InitializeStore();
+
+        return host;
     }
 }

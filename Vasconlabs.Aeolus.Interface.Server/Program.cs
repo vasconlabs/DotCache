@@ -1,4 +1,5 @@
 using Vasconlabs.Aeolus.Application.Cache;
+using Vasconlabs.Aeolus.Application.Cache.Services;
 using Vasconlabs.Aeolus.Interface.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +17,8 @@ if (app.Environment.IsDevelopment())
 {
     app.MapGrpcReflectionService();
 }
+
+app.UseAeolusCacheService();
 
 app.MapGrpcService<AeolusCacheService>();
 

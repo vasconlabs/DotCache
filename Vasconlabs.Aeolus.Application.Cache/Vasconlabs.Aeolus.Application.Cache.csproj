@@ -9,6 +9,7 @@
 
     <ItemGroup>
       <PackageReference Include="Google.Protobuf" Version="3.33.1" />
+      <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.0" />
       <PackageReference Include="Microsoft.FASTER.Core" Version="2.6.5" />
     </ItemGroup>
 

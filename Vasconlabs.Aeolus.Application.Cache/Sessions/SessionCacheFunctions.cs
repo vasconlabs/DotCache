@@ -2,7 +2,7 @@
 
 namespace Vasconlabs.Aeolus.Application.Cache.Sessions
 {
-    internal class CacheFunctions : FunctionsBase<ulong, byte[], byte[], byte[], Empty>
+    internal class SessionCacheFunctions : FunctionsBase<ulong, byte[], byte[], byte[], Empty>
     {
         public override bool SingleReader(ref ulong key, ref byte[] input, ref byte[] value, ref byte[] dst, ref ReadInfo readInfo)
         {

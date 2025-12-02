@@ -41,6 +41,25 @@ internal class CacheOperations(SessionPool sessionPool, CacheStore cacheStore): 
         }
     }
 
+    public async Task Delete(ulong key)
+    {
+        AeolusSession session = sessionPool.RentSession();
+
+        try
+        {
+            var result = await session.DeleteAsync(ref key);
+        }
+        finally
+        {
+            sessionPool.ReturnSession(session);
+        }
+    }
+
+    public async Task Flush()
+    {
+        cacheStore.FlushAllStore();
+    }
+
     public async Task SaveSnapshot()
     {
         foreach (var session in sessionPool.ReturnAllSessions())
@@ -52,16 +71,5 @@ internal class CacheOperations(SessionPool sessionPool, CacheStore cacheStore): 
     public async Task SaveLogCommit()
     {
         await cacheStore.Store.TakeHybridLogCheckpointAsync(CheckpointType.Snapshot);
-    }
-    
-    private static ReadOnlyMemory<byte> CopyToNewArray(SpanByteAndMemory output)
-    {
-        ReadOnlySpan<byte> src = output.IsSpanByte
-            ? output.SpanByte.AsReadOnlySpan()
-            : output.Memory.Memory.Span;
-
-        byte[] arr = new byte[src.Length];
-        src.CopyTo(arr);
-        return arr;
     }
 }
